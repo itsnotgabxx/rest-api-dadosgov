@@ -75,4 +75,7 @@ Com base nos dados analisados, foi definida uma modelagem com **4 entidades prin
 - **Instituição (1:N) Pagamento** → uma instituição pode estar vinculada a vários pagamentos.  
 - **Programa (1:N) Pagamento** → um programa pode financiar vários pagamentos.  
 
+<img width="1334" height="845" alt="image" src="https://github.com/user-attachments/assets/17d2d405-1ab5-4602-ac95-5c5bbadbe14d" />
+
+
 ---
