@@ -1,115 +1,103 @@
-## 👨‍🎓 Integrantes
-- Dimitri Monteiro – RGM: 29601380
-- Gabrielly da Silva Oliveira – RGM: 30511640
-- André Ruperto – RGM: 30003032
-- Everman de Araújo – RGM: 30333717
+# REST API de Dados Abertos (CNPq)
 
----
+## Descrição do Projeto
+Este projeto tem como objetivo principal a análise e a implementação de uma API RESTful para consulta de um conjunto de dados abertos do [Portal Brasileiro de Dados Abertos](https://dados.gov.br). A API é construída usando o framework **FastAPI** e utiliza **SQLAlchemy** para a modelagem do banco de dados.
 
-## COMO RODAR A APLICAÇÃO (DEDE E SEMPREHOMEM)
+O conjunto de dados selecionado é o de **Pagamentos do CNPq (jan–dez/2024)**, que registra bolsas e auxílios concedidos a pesquisadores, vinculados a instituições e programas de fomento à ciência e tecnologia.
 
-após clonar o repoisitório, abrir um novo terminal
+## Conjunto de Dados
+* **Origem:** Portal Dados.gov.br → CNPq
+* **Formato Original:** CSV
+* **Periodicidade:** Anual (2024)
+* **Total de Registros:** Aproximadamente 219 mil linhas
+* **Campos Principais:**
+    * Ano de referência
+    * Beneficiário (nome + CPF anonimizado)
+    * Instituição (origem/destino)
+    * Programa/Chamada
+    * Modalidade e Linha de Fomento
+    * Projeto vinculado
+    * Valor pago
 
-rodar o comando 
+## Modelagem do Banco de Dados
+A modelagem conceitual do banco de dados é baseada em 4 entidades principais, com seus respectivos relacionamentos:
 
- - python --version 
+* **Beneficiário:** `id`, `nome`, `cpf_anonimizado`, `categoria_nivel`
+* **Instituição:** `id`, `nome`, `sigla`, `cidade`, `uf`, `pais`
+* **Programa:** `id`, `nome_chamada`, `programa_cnpq`, `grande_area`, `area`, `subarea`
+* **Pagamento:** `id`, `ano_referencia`, `processo`, `modalidade`, `linha_fomento`, `valor_pago`, `data_inicio`, `data_fim`, `titulo_projeto`, `fk_beneficiario` (FK), `fk_instituicao` (FK), `fk_programa` (FK)
 
-se não funcionar, rodar o comando 
+### Relacionamentos
+* Um **Beneficiário** pode receber vários **Pagamentos** (1:N).
+* Uma **Instituição** pode estar vinculada a vários **Pagamentos** (1:N).
+* Um **Programa** pode financiar vários **Pagamentos** (1:N).
 
-- python3 --version
+Para uma representação visual do modelo de dados, consulte o Diagrama de Entidade-Relacionamento (DER) disponível em `documentacao/DER.pdf`.
 
-após verificar se o python está instalado
+## Estrutura da API
+A aplicação é composta pelos seguintes módulos:
+* `app/core/database.py`: Configuração da conexão com o banco de dados SQLite.
+* `app/models/`: Definição dos modelos de dados (`Beneficiario`, `Instituicao`, `Pagamento`, `Programa`) usando SQLAlchemy.
+* `app/schemas/`: Definição dos esquemas de dados para validação e serialização com Pydantic.
+* `app/services/`: Lógica de negócio para interação com o banco de dados.
+* `app/routers/`: Definição das rotas da API para cada entidade.
+* `app/main.py`: Ponto de entrada da aplicação FastAPI, onde as rotas são incluídas.
 
-rodar o comando: 
+## Instalação e Execução
+### Pré-requisitos
+* Python 3.x
 
- - python3 (ou python, depende da resposta dos comandos acima) -m venv .venv
+### Passo a passo
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/itsnotgabxx/rest-api-dadosgov.git](https://github.com/itsnotgabxx/rest-api-dadosgov.git)
+    cd rest-api-dadosgov
+    ```
 
-após ter criado a pasta .venv, rodar o comando 
+2.  **Crie e ative o ambiente virtual:**
+    ```bash
+    python3 -m venv .venv
+    source .venv/bin/activate
+    ```
+    * No Windows, use: `.venv\Scripts\activate`
 
-- source .venv/bin/activate
+3.  **Instale as dependências:**
+    ```bash
+    pip install "fastapi[standard]"
+    ```
 
-após isso, no seu terminal, antes do seu nome de usuário e pc, é para aparecer um .venv na frente, por exemplo:
+4.  **Execute a aplicação com o uvicorn:**
+    ```bash
+    uvicorn app.main:app --reload
+    ```
 
-(.venv) dimi@dimi:~/Documentos/rest-api-dadosgov$ 
+5.  **Acesse a documentação da API:**
+    Abra seu navegador e acesse a URL: `http://127.0.0.1:8000/docs` para visualizar a documentação interativa da API, gerada automaticamente pelo Swagger UI.
 
-se isso aconteceu, rode o comando
+## Rotas da API
+A API expõe os seguintes endpoints:
 
- - pip install fastapi[standard]
+* **Beneficiários (`/beneficiarios`)**
+    * `POST /`: Cria um novo beneficiário.
+    * `GET /{beneficiario_id}`: Retorna um beneficiário por ID.
 
-pronto, o ambiente está preparado!
+* **Instituições (`/instituicoes`)**
+    * `POST /`: Cria uma nova instituição.
+    * `GET /{instituicao_id}`: Retorna uma instituição por ID.
+    * `GET /`: Retorna uma lista de todas as instituições.
 
---
+* **Pagamentos (`/pagamentos`)**
+    * `POST /`: Cria um novo pagamento.
+    * `GET /{pagamento_id}`: Retorna um pagamento por ID.
+    * `GET /`: Retorna uma lista de todos os pagamentos.
 
-## 📌 Introdução
-Este trabalho tem como objetivo realizar a **análise de um conjunto de dados aberto**, disponível no [Portal Brasileiro de Dados Abertos](https://dados.gov.br), e a partir dele desenvolver a **modelagem conceitual** e a **implementação em banco de dados**.
+* **Programas (`/programas`)**
+    * `POST /`: Cria um novo programa.
+    * `GET /{programa_id}`: Retorna um programa por ID.
+    * `GET /`: Retorna uma lista de todos os programas.
 
-O dataset escolhido foi o de **Pagamentos do CNPq (jan–dez/2024)**, que contém registros de bolsas e auxílios concedidos a pesquisadores, vinculados a instituições e programas de fomento à ciência e tecnologia.
-
----
-
-## 📊 Conjunto de Dados
-- **Origem:** Portal Dados.gov.br → CNPq  
-- **Formato:** CSV  
-- **Periodicidade:** anual (2024)  
-- **Total de registros:** ~219 mil linhas  
-- **Campos principais:**
-  - Ano de referência  
-  - Beneficiário (nome + CPF anonimizado)  
-  - Instituição (origem/destino)  
-  - Programa/Chamada  
-  - Modalidade e Linha de Fomento  
-  - Projeto vinculado  
-  - Valor pago  
-
----
-
-## 🗄️ Modelagem do Banco de Dados
-Com base nos dados analisados, foi definida uma modelagem com **4 entidades principais**:
-
-1. **Beneficiário**
-   - id (PK)  
-   - nome  
-   - cpf_anonimizado  
-   - categoria_nivel  
-
-2. **Instituição**
-   - id (PK)  
-   - nome  
-   - sigla  
-   - cidade  
-   - uf  
-   - pais  
-
-3. **Pagamento**
-   - id (PK)  
-   - ano_referencia  
-   - processo  
-   - modalidade  
-   - linha_fomento  
-   - valor_pago  
-   - data_inicio  
-   - data_fim  
-   - titulo_projeto  
-   - fk_beneficiario (FK)  
-   - fk_instituicao (FK)  
-   - fk_programa (FK)  
-
-4. **Programa**
-   - id (PK)  
-   - nome_chamada  
-   - programa_cnpq  
-   - grande_area  
-   - area  
-   - subarea  
-
----
-
-## 🔗 Relacionamentos
-- **Beneficiário (1:N) Pagamento** → um beneficiário pode receber vários pagamentos.  
-- **Instituição (1:N) Pagamento** → uma instituição pode estar vinculada a vários pagamentos.  
-- **Programa (1:N) Pagamento** → um programa pode financiar vários pagamentos.  
-
-<img width="1334" height="845" alt="image" src="https://github.com/user-attachments/assets/17d2d405-1ab5-4602-ac95-5c5bbadbe14d" />
-
-
----
+## Integrantes do Grupo
+* Dimitri Monteiro – RGM: 29601380
+* Gabrielly da Silva Oliveira – RGM: 30511640
+* André Ruperto – RGM: 30003032
+* Everman de Araújo – RGM: 30333717
