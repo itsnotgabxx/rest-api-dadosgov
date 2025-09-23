@@ -6,6 +6,40 @@
 
 ---
 
+## COMO RODAR A APLICAÇÃO (DEDE E SEMPREHOMEM)
+
+após clonar o repoisitório, abrir um novo terminal
+
+rodar o comando 
+
+ - python --version 
+
+se não funcionar, rodar o comando 
+
+- python3 --version
+
+após verificar se o python está instalado
+
+rodar o comando: 
+
+ - python3 (ou python, depende da resposta dos comandos acima) -m venv .venv
+
+após ter criado a pasta .venv, rodar o comando 
+
+- source .venv/bin/activate
+
+após isso, no seu terminal, antes do seu nome de usuário e pc, é para aparecer um .venv na frente, por exemplo:
+
+(.venv) dimi@dimi:~/Documentos/rest-api-dadosgov$ 
+
+se isso aconteceu, rode o comando
+
+ - pip install fastapi[standard]
+
+pronto, o ambiente está preparado!
+
+--
+
 ## 📌 Introdução
 Este trabalho tem como objetivo realizar a **análise de um conjunto de dados aberto**, disponível no [Portal Brasileiro de Dados Abertos](https://dados.gov.br), e a partir dele desenvolver a **modelagem conceitual** e a **implementação em banco de dados**.
 
