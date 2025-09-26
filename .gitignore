@@ -205,3 +205,7 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+.env              # Configurações reais
+sql_app.db        # Banco de dados
+.venv/            # Ambiente virtual
