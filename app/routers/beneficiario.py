@@ -73,10 +73,43 @@ def read_beneficiarios_enhanced(
         model_class=BeneficiarioModel
     )
     
+    # CORREÇÃO: Converter objetos SQLAlchemy para dicionários serializáveis
+    beneficiarios_data = [
+        {
+            "id": item.id,
+            "nome": item.nome,
+            "cpf_anonimizado": item.cpf_anonimizado,
+            "categoria_nivel": item.categoria_nivel
+        }
+        for item in result["items"]
+    ]
+    
     return {
-        "data": result["items"],
+        "data": beneficiarios_data,
         "pagination": result["pagination"],
         "filters_applied": filters
+    }
+
+@router.get("/stats", response_model=Dict[str, Any])
+def get_beneficiarios_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_active_user)
+):
+    """Estatísticas dos beneficiários"""
+    from sqlalchemy import func
+    
+    total_beneficiarios = db.query(BeneficiarioModel).count()
+    por_categoria = db.query(
+        BeneficiarioModel.categoria_nivel, 
+        func.count(BeneficiarioModel.id).label('total')
+    ).group_by(BeneficiarioModel.categoria_nivel).all()
+    
+    return {
+        "total_beneficiarios": total_beneficiarios,
+        "por_categoria": [
+            {"categoria_nivel": categoria or "Não informado", "total": total} 
+            for categoria, total in por_categoria
+        ]
     }
 
 @router.get("/{beneficiario_id}", response_model=Beneficiario)
@@ -99,3 +132,37 @@ def create_beneficiario_route(
 ):
     """Cria um novo beneficiário (apenas admin)"""
     return create_beneficiario(db=db, beneficiario=beneficiario)
+
+@router.put("/{beneficiario_id}", response_model=Beneficiario)
+def update_beneficiario_route(
+    beneficiario_id: int,
+    beneficiario: BeneficiarioCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_admin_user)
+):
+    """Atualiza um beneficiário (apenas admin)"""
+    db_beneficiario = get_beneficiario(db, beneficiario_id=beneficiario_id)
+    if db_beneficiario is None:
+        raise HTTPException(status_code=404, detail="Beneficiário não encontrado")
+    
+    for key, value in beneficiario.dict(exclude_unset=True).items():
+        setattr(db_beneficiario, key, value)
+    
+    db.commit()
+    db.refresh(db_beneficiario)
+    return db_beneficiario
+
+@router.delete("/{beneficiario_id}")
+def delete_beneficiario_route(
+    beneficiario_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_admin_user)
+):
+    """Deleta um beneficiário (apenas admin)"""
+    db_beneficiario = get_beneficiario(db, beneficiario_id=beneficiario_id)
+    if db_beneficiario is None:
+        raise HTTPException(status_code=404, detail="Beneficiário não encontrado")
+    
+    db.delete(db_beneficiario)
+    db.commit()
+    return {"message": "Beneficiário deletado com sucesso"}
