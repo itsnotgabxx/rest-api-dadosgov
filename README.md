@@ -10,7 +10,7 @@ O conjunto de dados selecionado é o de **Pagamentos do CNPq (jan–dez/2024)**,
 * **Nome do arquivo:** 20250204 Planilha Dados de Pagamento jan-dez_2024 - PDA CSV
 * **Formato Original:** CSV
 * **Periodicidade:** Anual (2024)
-* **Total de Registros:** Aproximadamente 219 mil linhas
+* **Total de Registros:** 219662 linhas
 * **Campos Principais:**
     * Ano de referência
     * Beneficiário (nome + CPF anonimizado)
