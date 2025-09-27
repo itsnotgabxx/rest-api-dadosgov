@@ -1,12 +1,13 @@
 # REST API de Dados Abertos (CNPq)
 
 ## Descrição do Projeto
-Este projeto tem como objetivo principal a análise e a implementação de uma API RESTful para consulta de um conjunto de dados abertos do [Portal Brasileiro de Dados Abertos](https://dados.gov.br). A API é construída usando o framework **FastAPI** e utiliza **SQLAlchemy** para a modelagem do banco de dados.
+Este projeto tem como objetivo principal a análise e a implementação de uma API RESTful para consulta de um conjunto de dados abertos do [Portal Brasileiro de Dados Abertos](https://dados.gov.br/dados/conjuntos-dados/bolsas-e-auxilios-pagos). A API é construída usando o framework **FastAPI** e utiliza **SQLAlchemy** para a modelagem do banco de dados.
 
 O conjunto de dados selecionado é o de **Pagamentos do CNPq (jan–dez/2024)**, que registra bolsas e auxílios concedidos a pesquisadores, vinculados a instituições e programas de fomento à ciência e tecnologia.
 
 ## Conjunto de Dados
 * **Origem:** Portal Dados.gov.br → CNPq
+* **Nome do arquivo:** 20250204 Planilha Dados de Pagamento jan-dez_2024 - PDA CSV
 * **Formato Original:** CSV
 * **Periodicidade:** Anual (2024)
 * **Total de Registros:** Aproximadamente 219 mil linhas
