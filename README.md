@@ -259,34 +259,6 @@ Endpoints especiais para análise de dados:
 - `/programas/areas`: Distribuição por áreas de conhecimento
 - `/pagamentos/stats`: Valores totais, médios, por modalidade e ano
 
-## Troubleshooting
-
-### Problemas Comuns
-
-1. **Erro "Column expression expected"**
-   - Verifique se os arquivos em `app/models/` contêm apenas modelos SQLAlchemy, não código de routers
-
-2. **Arquivo CSV muito grande para Git**
-   ```bash
-   # Adicionar ao .gitignore
-   echo "dados/" >> .gitignore
-   git add .gitignore
-   git commit -m "Adiciona dados/ ao .gitignore"
-   ```
-
-3. **Dependências em falta**
-   ```bash
-   pip install python-jose[cryptography] passlib[bcrypt] python-multipart pandas
-   ```
-
-4. **Problemas de encoding no CSV**
-   - Certifique-se de que o arquivo CSV está em UTF-8
-   - O script tenta diferentes encodings automaticamente
-
-5. **Erro de serialização**
-   - Indica mistura entre modelos SQLAlchemy e schemas Pydantic
-   - Verifique se os routers estão usando as importações corretas
-
 ## Estrutura de Arquivos
 
 ```
